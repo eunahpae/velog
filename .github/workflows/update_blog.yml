@@ -1,6 +1,5 @@
 name: Update Blog Posts
   
-
 on:
   push:
       branches:
