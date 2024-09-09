@@ -1,59 +1,66 @@
 <p>밸로그에 글 작성시, 깃헙에 자동으로 커밋되도록 설정할 수 있다. </p>
 <h3 id="1-github-에-새-레포지토리-생성">1. Github 에 새 레포지토리 생성</h3>
-<pre><code>- public 으로 생성 후 다음과 같이 디렉토리를 구성한다.
+- public 으로 생성 후 다음과 같이 디렉토리를 구성한다.
+<pre><code>
+      ```
+      생성한 레포지토리/
+      ├── .github/
+      │   └── workflows/
+      │       └── update_blog.yml
+      ├── scripts/
+      │   └── update_blog.py
+      └── ...
+      ```
+</code></pre>
 
-```
-생성한 레포지토리/
-├── .github/
-│   └── workflows/
-│       └── update_blog.yml
-├── scripts/
-│   └── update_blog.py
-└── ...
-```</code></pre><h3 id="2github-action-작성">2.Github Action 작성</h3>
+<h3 id="2github-action-작성">2.Github Action 작성</h3>
 <ul>
 <li><p>.github/workflows/update_blog.yml : 아래 코드는 매일 지정한 시각 또는 해당 레포지토리가 push 될 때 파이썬 스크립트(update_blog.py)를 실행하는 코드이다.</p>
-<pre><code>  name: Update Blog Posts
+<pre><code>  
+        ```
+        name: Update Blog Posts
 
-</code></pre></li>
-</ul>
-<pre><code>on:
-  push:
-      branches:
-        - main  # 또는 워크플로우를 트리거하고 싶은 브랜치 이름
-  schedule:
-    - cron: '0 0 * * *'  # 매일 자정에 실행 (분 / 시 로 원하는 시간 지정 가능)
+        on:
+          push:
+              branches:
+                - main  # 또는 워크플로우를 트리거하고 싶은 브랜치 이름
+          schedule:
+            - cron: '0 0 * * *'  # 매일 자정에 실행 (분 / 시 로 원하는 시간 지정 가능)
 
-jobs:
-  update_blog:
-    runs-on: ubuntu-latest
+        jobs:
+          update_blog:
+            runs-on: ubuntu-latest
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v2
+            steps:
+            - name: Checkout
+              uses: actions/checkout@v2
 
-    - name: Push changes
-      run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git push https://${{ secrets.GH_PAT }}@github.com/깃헙아이디/레포지토리.git
+            - name: Push changes
+              run: |
+                git config --global user.name 'github-actions[bot]'
+                git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+                git push https://${{ secrets.GH_PAT }}@github.com/깃헙아이디/레포지토리.git
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                python-version: '3.x'
 
-    - name: Install dependencies
-      run: |
-        pip install feedparser gitpython
+            - name: Install dependencies
+              run: |
+                pip install feedparser gitpython
 
-    - name: Run script
-      run: python scripts/update_blog.py
+            - name: Run script
+              run: python scripts/update_blog.py
+      ```
+</code></pre>
 
-```</code></pre><h3 id="3-python-스크립트-작성">3. Python 스크립트 작성</h3>
+<h3 id="3-python-스크립트-작성">3. Python 스크립트 작성</h3>
 <ul>
 <li><p>scripts/update_blog.py</p>
-<pre><code>    import feedparser
+<pre><code>    
+```
+    import feedparser
     import git
     import os
 
@@ -97,12 +104,17 @@ jobs:
 
     # 변경 사항을 깃허브에 푸시
     repo.git.push()</code></pre></li>
+    ```
 </ul>
 <h3 id="4-pat-권한-받기">4. PAT 권한 받기</h3>
-<pre><code>1. github 계정 - Settings - Developer Settings - Personal access tokens (classic) - Generate New Token(classic) - 이름 쓰고 repo, workflow 클릭 - Generate new token
-2. 받은 토큰 복사 (발급시 한번만 확인가능하기 때문에 복사 필수!!!!)
-3. 위에서 생성한 레포지토리 - Settings - Security - Secrets and variables - Actions - New Repository Secret
-4. Name : GH_PAT, Secret : [2번에서 발급받은 토큰]</code></pre><h3 id="5-test">5. Test</h3>
+<pre><code>
+      1. github 계정 - Settings - Developer Settings - Personal access tokens (classic) - Generate New Token(classic) - 이름 쓰고 repo, workflow 클릭 - Generate new token
+      2. 받은 토큰 복사 (발급시 한번만 확인가능하기 때문에 복사 필수!!!!)
+      3. 위에서 생성한 레포지토리 - Settings - Security - Secrets and variables - Actions - New Repository Secret
+      4. Name : GH_PAT, Secret : [2번에서 발급받은 토큰]
+</code></pre>
+
+<h3 id="5-test">5. Test</h3>
 <ul>
 <li>Velog 에 글을 작성하고, 지정시간에 확인시 velog-posts 폴더에 자동으로 .md 파일로 저장되는 것을 확인한다!</li>
 </ul>
