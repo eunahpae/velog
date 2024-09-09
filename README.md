@@ -56,6 +56,14 @@
           run: python scripts/update_blog.py
 
     ```
+    시간 설정<br>
+    '* * * * *<br>
+     | | | | |<br>
+     | | | | ----- Day of the week (0 - 7) (Sunday = 0 or 7)<br>
+     | | | ------- Month (1 - 12)<br>
+     | | --------- Day of the month (1 - 31)<br>
+     | ----------- Hour (0 - 23)<br>
+     -------------- Minute (0 - 59)<br>
     
 ### 3. Python 스크립트 작성
 - scripts/update_blog.py
